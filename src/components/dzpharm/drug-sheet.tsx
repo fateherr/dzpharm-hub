@@ -517,7 +517,7 @@ export function DrugSheet() {
 
   // Rafraîchit la fiche (compteur de consultations) à chaque ouverture
   useEffect(() => {
-    if (sheetDrugId !== null) {
+    if (typeof sheetDrugId === 'number') {
       queryClient.invalidateQueries({ queryKey: ['drug', sheetDrugId] })
     }
   }, [sheetDrugId, queryClient])
@@ -525,14 +525,14 @@ export function DrugSheet() {
   const { data, isLoading } = useQuery({
     queryKey: ['drug', sheetDrugId],
     queryFn: ({ signal }) => fetchDrugDetail(sheetDrugId as number, signal),
-    enabled: sheetDrugId !== null,
+    enabled: typeof sheetDrugId === 'number',
   })
 
   // Signalements de pénurie communautaires pour ce médicament
   const { data: shortageData } = useQuery({
     queryKey: ['shortages', 'drug', sheetDrugId],
     queryFn: ({ signal }) => fetchDrugShortages(sheetDrugId as number, signal),
-    enabled: sheetDrugId !== null,
+    enabled: typeof sheetDrugId === 'number',
   })
   const activeShortageCount = shortageData?.stats.active ?? 0
 
@@ -739,7 +739,7 @@ export function DrugSheet() {
   }
 
   return (
-    <Sheet open={sheetDrugId !== null} onOpenChange={(o) => !o && closeDrug()}>
+    <Sheet open={typeof sheetDrugId === 'number'} onOpenChange={(o) => !o && closeDrug()}>
       <SheetContent
         side="right"
         className="flex flex-col h-full w-full gap-0 overflow-hidden border-l border-border/80 bg-background p-0 shadow-2xl sm:max-w-xl md:max-w-2xl lg:max-w-[740px]"
@@ -1232,7 +1232,7 @@ export function DrugSheet() {
                 onOpenAdvanced={() => {
                   closeDrug()
                   openTool('pediatrie')
-                  setView('outils')
+                  setView('securite')
                 }}
               />
 
